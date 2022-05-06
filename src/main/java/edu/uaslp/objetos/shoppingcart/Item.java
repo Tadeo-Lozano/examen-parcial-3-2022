@@ -3,32 +3,41 @@ package edu.uaslp.objetos.shoppingcart;
 import java.math.BigDecimal;
 
 public class Item {
-    private String itemCode;
+    private String code;
     private String providerCode;
-    private int cant;
+    private int quantity;
     private BigDecimal unitCost;
 
-    public Item(String code1, String providerCode1, BigDecimal precio, int cant) {
-        this.itemCode = code1;
-        this.providerCode = providerCode1;
-        this.cant = cant;
-        this.unitCost = precio;
+    public Item(String code, String providerCode, BigDecimal unitCost, int quantity) {
+        if (code == null || code == ""){
+            throw new InvalidDataException("Null or empty string not allowed for item code");
+        }if (providerCode == null || providerCode == ""){
+            throw new InvalidDataException("Null or empty string not allowed for provider code");
+        }if (unitCost.compareTo(new BigDecimal("0")) <= 0){
+            throw new InvalidDataException("Cost must be greater than zero");
+        }if (quantity < 0 || quantity > 5) {
+            throw new InvalidDataException("Quantity must be greater than zero and lower than 5");
+        }
+        this.code = code;
+        this.providerCode = providerCode;
+        this.unitCost = unitCost;
+        this.quantity = quantity;
     }
 
-    public Item(){
+    public Item() {
 
     }
 
-    public void setCode(String itemCode) {
-        this.itemCode = itemCode;
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public void setProviderCode(String providerCode) {
         this.providerCode = providerCode;
     }
 
-    public void setQuantity(int cant) {
-        this.cant = cant;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public void setUnitCost(BigDecimal unitCost) {
@@ -36,18 +45,18 @@ public class Item {
     }
 
     public String getCode() {
-        return null;
+        return code;
     }
 
     public String getProviderCode() {
-        return null;
+        return providerCode;
     }
 
     public int getQuantity() {
-        return 0;
+        return quantity;
     }
 
     public BigDecimal getUnitCost() {
-        return this.unitCost;
+        return unitCost;
     }
 }

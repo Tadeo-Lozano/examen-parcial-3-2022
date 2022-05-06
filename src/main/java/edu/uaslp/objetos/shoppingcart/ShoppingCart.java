@@ -4,56 +4,64 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.OptionalDouble;
 
 public class ShoppingCart {
-    LinkedList<Item> linkedList= new LinkedList<>();
-    private BigDecimal tot;
-
-    public ShoppingCart(){
-
-    }
+    List<Item> cart = new ArrayList<>();
+    int itemsCount;
 
     public boolean isEmpty() {
-        if(linkedList.size()==0){
-            return true;
-        }else
+        if (cart.size() > 0){
             return false;
+        }
+        return true;
     }
 
-    public BigDecimal getTotalCost() throws EmptyShoppingCartException {
-        if(linkedList.size()==0){
+
+    public BigDecimal getTotalCost() {
+        if (isEmpty()) {
             throw new EmptyShoppingCartException();
         }
-        for(int i=0;i<getItemsCount();i++){
-            tot+=linkedList.get(i).getUnitCost();
+        BigDecimal totalCost = BigDecimal.ZERO;
+
+        for(Item item: cart){
+            totalCost = totalCost.add(item.getUnitCost().multiply(BigDecimal.valueOf(item.getQuantity())));
         }
-        return BigDecimal.valueOf(0);
+
+        return totalCost;
+
     }
 
     public void addItem(Item item) {
-        if(item.getProviderCode()==""){
-            throw new InvalidDataException("Null or empty string not allowed for provider code");
-        }else
-        if(item.getCode()==null){
-            throw new InvalidDataException("Null or empty string not allowed for item code");
-        }else
-        if(item.getUnitCost().compareTo()<0){
-            throw new InvalidDataException("Cost must be greater than zero");
-        }else
-            if(item.getQuantity() < 1 && item.getQuantity() > 5){
-                throw new InvalidDataException("Quantity must be greater than zero and lower than 5");
+        for (Item item1: cart){
+            if (item1.getCode() == item.getCode() && item1.getUnitCost().compareTo(item.getUnitCost()) == 0){
+                item1.setQuantity(item1.getQuantity() + item.getQuantity());
+                return;
             }
-            linkedList.add(item);
+        }
+        cart.add(item);
     }
 
     public int getItemsCount() {
-        return linkedList.size();
+        for (int i=0; i<cart.size(); i++){
+            itemsCount = itemsCount + cart.get(i).getQuantity();
+        }
+        return itemsCount;
     }
 
     public List<Item> getItems() {
-        return new ArrayList<>();
+        return cart;
     }
 
-    public void removeItem(String itemCode2) {
+    public void removeItem(String code) {
+        for (Item item : cart){
+            if (item.getCode() == code){
+                item.setQuantity(item.getQuantity() - 1);
+                if (item.getQuantity() == 0){
+                    cart.remove(item);
+                }
+                return;
+            }
+        }
     }
 }
